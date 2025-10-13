@@ -15,6 +15,5 @@ data class FavouriteBook (
     @ColumnInfo(name = "age")
     val year: Int?,
     @ColumnInfo(name = "cover")
-    val cover: Int,
-
+    val cover: String?
 )
