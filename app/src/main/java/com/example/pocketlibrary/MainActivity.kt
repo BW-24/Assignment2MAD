@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
                                 onClick = {tab = 0}
                             )
                             NavigationBarItem(
-                                icon = { Icon(Icons.Default.Search, contentDescription = "My Library")},
+                                icon = { Icon(Icons.Default.Star, contentDescription = "My Library")},
                                 label = { Text("My Library")},
                                 selected = tab == 1,
                                 onClick = {tab = 1}
