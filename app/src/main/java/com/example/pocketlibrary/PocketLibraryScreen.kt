@@ -8,15 +8,23 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.clickable
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.viewmodel.compose.viewModel
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
-fun PocketLibrarySearchScreen(vm: BookViewModel = viewModel()) {
+fun PocketLibrarySearchScreen(
+    vm: BookViewModel = viewModel(),
+    modifier: Modifier,
+    libraryViewModel: LibraryViewModel
+) {
     val state by vm.state.collectAsState()
+    val context = LocalContext.current
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         OutlinedTextField(
@@ -56,7 +64,22 @@ fun PocketLibrarySearchScreen(vm: BookViewModel = viewModel()) {
                         contentPadding = PaddingValues(bottom = 16.dp)
                     ) {
                         items(state.results) { book ->
-                            Card(Modifier.aspectRatio(0.7f)) {
+                            Card(
+                                modifier = Modifier
+                                    .aspectRatio(0.7f)
+
+                                    // when you click the card it saves it to my library
+                                    .clickable {
+                                        val fave = FavouriteBook(
+                                            title = book.title ?:"",
+                                            author = book.authorNames?.joinToString(",") ?: "",
+                                            year = book.firstPublishYear,
+                                            cover =  book.coverImageUrl
+                                        )
+                                        libraryViewModel.addBook(fave)
+                                        Toast.makeText(context,"${book.title} has been saved to library",Toast.LENGTH_SHORT).show()
+                                    }
+                                ) {
                                 Column {
                                     AsyncImage(
                                         model = book.coverImageUrl,
