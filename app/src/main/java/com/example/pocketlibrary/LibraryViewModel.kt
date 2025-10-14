@@ -16,7 +16,7 @@ data class LibraryUiState(
 
 class LibraryViewModel(private val dao: FavouriteBookDAO): ViewModel() {
     private val _state = MutableStateFlow(LibraryUiState())
-    val state: MutableStateFlow<LibraryUiState> = _state
+    val state: StateFlow<LibraryUiState> = _state
 
     init {
         load()
