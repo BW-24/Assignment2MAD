@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import androidx.compose.ui.text.input.KeyboardType
 
+// my library screen that can be seen offline
 @Composable
 fun OfflineLibraryScreen(modifier: Modifier, vm: LibraryViewModel) {
     val state by vm.state.collectAsState()

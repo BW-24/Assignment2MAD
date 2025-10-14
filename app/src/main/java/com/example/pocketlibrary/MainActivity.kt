@@ -23,9 +23,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             PocketLibraryTheme {
 
+
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val dao = remember { AppDatabase.getDatabase(context).favouriteBookDao() }
 
+                // this creates an instance of LibraryViewModel to be used
                 val libraryViewModel: LibraryViewModel = viewModel(
                     factory = viewModelFactory {
                         initializer { LibraryViewModel(dao) }
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
 
                 // added a navigation bar on the bottom of the screen to switch from main search and the saved library
                 var tab by remember { mutableStateOf(0) }
+
                 Scaffold(
                     bottomBar = {
                         NavigationBar {
