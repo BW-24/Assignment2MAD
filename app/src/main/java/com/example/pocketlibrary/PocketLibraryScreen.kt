@@ -1,30 +1,32 @@
 package com.example.pocketlibrary
 
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.clickable
-import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
-import androidx.lifecycle.viewmodel.compose.viewModel
-import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
-
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import androidx.compose.foundation.text.KeyboardActions
 
 @Composable
 fun PocketLibrarySearchScreen(
-    vm: BookViewModel = viewModel(),
+    vm: BookViewModel,
     modifier: Modifier,
     libraryViewModel: LibraryViewModel
 ) {
     val state by vm.state.collectAsState()
     val context = LocalContext.current
+
+    val gridState = rememberLazyGridState()
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         OutlinedTextField(
@@ -33,9 +35,8 @@ fun PocketLibrarySearchScreen(
             label = { Text("Search Books") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            keyboardActions = androidx.compose.foundation.text.KeyboardActions(
-                onSearch = { vm.search() }
-            )
+            // triggered by the onValueChange callback.
+            keyboardActions = KeyboardActions.Default
         )
 
         Spacer(Modifier.height(12.dp))
@@ -58,6 +59,7 @@ fun PocketLibrarySearchScreen(
                 else -> {
                     LazyVerticalGrid(
                         columns = GridCells.Adaptive(140.dp),
+                        state = gridState,
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.fillMaxSize(),
@@ -67,19 +69,23 @@ fun PocketLibrarySearchScreen(
                             Card(
                                 modifier = Modifier
                                     .aspectRatio(0.7f)
-
-                                    // when you click the card it saves it to my library
                                     .clickable {
                                         val fave = FavouriteBook(
-                                            title = book.title ?:"",
+                                            title = book.title ?: "",
                                             author = book.authorNames?.joinToString(",") ?: "",
                                             year = book.firstPublishYear,
-                                            cover =  book.coverImageUrl
+                                            cover = book.coverImageUrl
                                         )
                                         libraryViewModel.addBook(fave)
-                                        Toast.makeText(context,"${book.title} has been saved to library",Toast.LENGTH_SHORT).show()
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                "${book.title} has been saved to library",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                            .show()
                                     }
-                                ) {
+                            ) {
                                 Column {
                                     AsyncImage(
                                         model = book.coverImageUrl,
@@ -96,7 +102,8 @@ fun PocketLibrarySearchScreen(
                                         maxLines = 2
                                     )
                                     Text(
-                                        text = book.authorNames?.joinToString(", ") ?: "Unknown author",
+                                        text = book.authorNames?.joinToString(", ")
+                                            ?: "Unknown author",
                                         style = MaterialTheme.typography.bodyMedium,
                                         maxLines = 1
                                     )
@@ -113,5 +120,3 @@ fun PocketLibrarySearchScreen(
         }
     }
 }
-
-

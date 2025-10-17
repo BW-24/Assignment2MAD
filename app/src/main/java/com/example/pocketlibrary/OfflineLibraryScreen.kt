@@ -14,6 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.lazy.rememberLazyListState
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 
 // my library screen that can be seen offline
 @Composable
@@ -22,6 +25,25 @@ fun OfflineLibraryScreen(modifier: Modifier, vm: LibraryViewModel) {
 
     var updateWindow by remember { mutableStateOf(false) }
     var selectedBook by remember { mutableStateOf<FavouriteBook?>(null) }
+
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(state.faves) {
+        if (state.faves.isNotEmpty()) {
+            listState.scrollToItem(
+                index = state.initialListIndex,
+                scrollOffset = state.initialListOffset
+            )
+        }
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+            .distinctUntilChanged()
+            .collect { (index, offset) ->
+                vm.saveScrollPosition(index, offset)
+            }
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         OutlinedTextField(
@@ -33,7 +55,10 @@ fun OfflineLibraryScreen(modifier: Modifier, vm: LibraryViewModel) {
 
         Spacer(Modifier.height(12.dp))
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             items(state.faves) { book ->
                 Card(Modifier.fillMaxWidth()) {
                     Row(Modifier.padding(8.dp)) {

@@ -11,10 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-
 import com.example.pocketlibrary.ui.theme.PocketLibraryTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,10 +28,15 @@ class MainActivity : ComponentActivity() {
                 val context = androidx.compose.ui.platform.LocalContext.current
                 val dao = remember { AppDatabase.getDatabase(context).favouriteBookDao() }
 
-                // this creates an instance of LibraryViewModel to be used
                 val libraryViewModel: LibraryViewModel = viewModel(
                     factory = viewModelFactory {
-                        initializer { LibraryViewModel(dao) }
+                        initializer { LibraryViewModel(dao, createSavedStateHandle()) }
+                    }
+                )
+
+                val bookViewModel: BookViewModel = viewModel(
+                    factory = viewModelFactory {
+                        initializer { BookViewModel(createSavedStateHandle()) }
                     }
                 )
 
@@ -42,24 +47,28 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         NavigationBar {
                             NavigationBarItem(
-                                icon = { Icon(Icons.Default.Search, contentDescription = "Search")},
-                                label = { Text("Search")},
+                                icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                                label = { Text("Search") },
                                 selected = tab == 0,
-                                onClick = {tab = 0}
+                                onClick = { tab = 0 }
                             )
                             NavigationBarItem(
-                                icon = { Icon(Icons.Default.Star, contentDescription = "My Library")},
-                                label = { Text("My Library")},
+                                icon = { Icon(Icons.Default.Star, contentDescription = "My Library") },
+                                label = { Text("My Library") },
                                 selected = tab == 1,
-                                onClick = {tab = 1}
+                                onClick = { tab = 1 }
                             )
                         }
                     }
                 ) { innerPadding ->
 
                     val modifier = Modifier.padding(innerPadding)
-                    when(tab) {
-                        0 -> PocketLibrarySearchScreen(modifier = modifier, libraryViewModel = libraryViewModel)
+                    when (tab) {
+                        0 -> PocketLibrarySearchScreen(
+                            vm = bookViewModel,
+                            modifier = modifier,
+                            libraryViewModel = libraryViewModel
+                        )
                         1 -> OfflineLibraryScreen(modifier = modifier, vm = libraryViewModel)
                     }
                 }
@@ -69,5 +78,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
