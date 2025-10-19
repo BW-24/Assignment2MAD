@@ -47,8 +47,8 @@ class BookViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         savedStateHandle[QUERY_KEY] = q
     }
 
-    private fun search(title: String) {
-        val trimmedQuery = title.trim()
+    private fun search(q: String) {
+        val trimmedQuery = q.trim()
         if (trimmedQuery.isEmpty()) {
             _state.value = _state.value.copy(results = emptyList(), loading = false)
             return
