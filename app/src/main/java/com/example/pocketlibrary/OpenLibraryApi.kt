@@ -8,7 +8,7 @@ import com.squareup.moshi.JsonClass
 interface OpenLibraryApi {
     @GET("search.json")
         suspend fun searchBooks(
-        @Query("query") q: String,
+        @Query("q") query: String,
         @Query("fields") fields: String = "key,title,author_name,first_publish_year,cover_i",
         @Query("sort") sort: String? = null,
         @Query("lang") language: String? = null,
