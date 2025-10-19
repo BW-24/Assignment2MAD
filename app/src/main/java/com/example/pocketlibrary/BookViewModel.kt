@@ -1,5 +1,6 @@
 package com.example.pocketlibrary
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -15,7 +16,7 @@ data class UiState(
     val results: List<Book> = emptyList()
 )
 
-class BookViewModel : ViewModel() {
+class BookViewModel(createSavedStateHandle: SavedStateHandle) : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state
 

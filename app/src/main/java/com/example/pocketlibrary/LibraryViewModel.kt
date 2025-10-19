@@ -1,5 +1,6 @@
 package com.example.pocketlibrary
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,9 +11,12 @@ import kotlinx.coroutines.launch
 data class LibraryUiState(
     val faves: List<FavouriteBook> = emptyList(),
     val query: String = ""
-)
+) {
+    val initialListOffset: Int = 0
+    val initialListIndex: Int = 0
+}
 
-class LibraryViewModel(private val dao: FavouriteBookDAO): ViewModel() {
+class LibraryViewModel(private val dao: FavouriteBookDAO, createSavedStateHandle: SavedStateHandle): ViewModel() {
     private val _state = MutableStateFlow(LibraryUiState())
     val state: StateFlow<LibraryUiState> = _state
 
